@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -44,8 +46,9 @@ public class Main_teleOp extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor  shootingmotorleft = null;
-    private DcMotor shootingmotorright = null;
+    private DcMotorEx shootingmotorleft = null;
+    private DcMotorEx shootingmotorright = null;
+    private Servo shootingservo = null;
 //    private CRServo shootingservo = null;
 
     @Override
@@ -57,9 +60,15 @@ public class Main_teleOp extends LinearOpMode {
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontright_drive");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backleft_drive");
         backRightDrive= hardwareMap.get(DcMotor.class, "backright_drive");
-        shootingmotorleft= hardwareMap.get(DcMotor.class, "shooting_motor_left");
-        shootingmotorright= hardwareMap.get(DcMotor.class, "shooting_motor_right");
-//        shootingservo= hardwarmap.get(CRServo.class, "shooting_servo")
+        shootingmotorleft= hardwareMap.get(DcMotorEx.class, "shooting_motor_left");
+        shootingmotorright= hardwareMap.get(DcMotorEx.class, "shooting_motor_right");
+        shootingservo= hardwareMap.get(Servo.class, "shooting_servo");
+
+        shootingmotorleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shootingmotorright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        shootingmotorleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shootingmotorright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -90,7 +99,7 @@ public class Main_teleOp extends LinearOpMode {
 
 
             double axial = -gamepad1.left_stick_y / 2;  // Note: pushing stick forward gives negative value
-            double lateral = gamepad1.left_stick_x / 2;
+            double lateral = -gamepad1.left_stick_x / 2;
             double yaw = gamepad1.right_stick_x / 2;
 
 
@@ -130,12 +139,16 @@ public class Main_teleOp extends LinearOpMode {
 //            } else shooting_servo.setPower(0);
 
             if (gamepad2.left_stick_y > 0.1) {
-                shootingmotorleft.setPower(gamepad2.left_stick_y);
-                shootingmotorright.setPower(gamepad2.left_stick_y);
-            } else if (gamepad2.left_stick_y < -0.1) {
-                shootingmotorleft.setPower(gamepad2.left_stick_y);
-                shootingmotorright.setPower(gamepad2.left_stick_y);
-            } else shootingmotorright.setPower(0); shootingmotorleft.setPower(0);
+                shootingmotorleft.setVelocity(3000);
+                shootingmotorright.setVelocity(3000);
+            } else if (gamepad2.left_stick_y< -0.1) {
+                shootingmotorleft.setVelocity(7000);
+                shootingmotorright.setVelocity(7000);
+            } else shootingmotorright.setVelocity(0); shootingmotorleft.setVelocity(0);
+
+            if (gamepad2.a){
+                shootingservo.setPosition(0);
+            }else shootingservo.setPosition(.4);
 
         }
     }}
