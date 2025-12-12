@@ -528,7 +528,7 @@ This is a bug fix only release to address the following four issues.
 * Adds new Java sample to demonstrate using a hardware class to abstract robot actuators, and share them across multiple OpModes.
   * Sample OpMode is [ConceptExternalHardwareClass.java](FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptExternalHardwareClass.java)
   * Abstracted hardware class is [RobotHardware.java](FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/RobotHardware.java)
-* Updates RobotAutoDriveByGyro_Linear Java sample to use REV Control/Expansion hub IMU.
+* Updates org.firstinspires.ftc.teamcode.RobotAutoDriveByGyro_Linear Java sample to use REV Control/Expansion hub IMU.
 * Updates Vuforia samples to reference PowerPlay assets and have correct names and field locations of image targets.
 * Updates TensorFlow samples to reference PowerPlay assets.
 * Adds opt-in support for Java 8 language features to the OnBotJava editor.
