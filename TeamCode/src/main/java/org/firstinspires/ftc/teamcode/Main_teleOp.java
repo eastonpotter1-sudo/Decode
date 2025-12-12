@@ -144,7 +144,7 @@ public class Main_teleOp extends LinearOpMode {
             } else if (gamepad2.left_stick_y< -0.1) {
                 shootingmotorleft.setVelocity(7000);
                 shootingmotorright.setVelocity(7000);
-            } else shootingmotorright.setVelocity(0); shootingmotorleft.setVelocity(0);
+            } else {shootingmotorright.setVelocity(0); shootingmotorleft.setVelocity(0);}
 
             if (gamepad2.a){
                 shootingservo.setPosition(0);
