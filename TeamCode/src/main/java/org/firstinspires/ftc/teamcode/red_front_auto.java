@@ -88,7 +88,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="red_fron_auto", group="Robot")
+@Autonomous(name="red_front_auto", group="Robot")
 
 public class red_front_auto extends LinearOpMode {
 
@@ -129,7 +129,7 @@ public class red_front_auto extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
+    static final double     DRIVE_SPEED             = .6;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.2;     // Max turn speed to limit turn rate.
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
@@ -227,25 +227,26 @@ public class red_front_auto extends LinearOpMode {
 
         shootingservo.setPosition(0.4);
 
-        driveStraight(DRIVE_SPEED, 5, 0.0);
-
-        turnToHeading( TURN_SPEED, -30.0);
-        sleep(500);
-        shoot();
-        shootingservo.setPosition((0));
-        sleep(1000);
-        shootingservo.setPosition(0.4);
-        shoot();
-        shootingservo.setPosition(0);
-        sleep(1000);
-        shootingservo.setPosition(0.4);
-        turnToHeading(TURN_SPEED, 0);
-        driveStraight(DRIVE_SPEED, 5, 0.0);    // Drive Forward 24"
 //        moveRobot(DRIVE_SPEED,62);
 //        encoderDrive(DRIVE_SPEED,62,62);
+        driveStraight(TURN_SPEED,10, 0);
+        turnToHeading( TURN_SPEED, -25.0);
+        spin();
+        shoot();
+        spin2();
+        shoot2();
+        spin3();
+        shoot3();
+        sleep(300);
+        turnToHeading(TURN_SPEED, 0);
+        driveStraight(DRIVE_SPEED,-10,0);
+        turnToHeading(TURN_SPEED, -90);
+        driveStraight(DRIVE_SPEED, 20, -90);
+        shootingservo.setPosition(0.4);
+        sleep(400);
         //      moveRobot(DRIVE_SPEED,45);
-        //    turnToHeading( TURN_SPEED, -35.0);
-        //    driveStraight(driveSpeed, 5, -35);// Turn  CW to -45 Degrees
+        //    driveStraight(driveSpeed, 5, -35);
+//        turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
 //        holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
 //
 //        driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
@@ -339,22 +340,82 @@ public class red_front_auto extends LinearOpMode {
     public void spin() {
         runtime.reset();
         while (opModeIsActive()){
-            if (runtime.seconds() <3) {
-                shootingmotorright.setVelocity(1800);
-                shootingmotorleft.setVelocity(1800);
-            }}}
+            if (runtime.seconds() <4){
+                shootingmotorright.setVelocity(1660);
+                shootingmotorleft.setVelocity(1660);
+            }
+
+            else {
+                return;
+            }
+        }}
+    public void spin2() {
+        runtime.reset();
+        while (opModeIsActive()){
+            if (runtime.seconds() <4){
+                shootingmotorright.setVelocity(1950);
+                shootingmotorleft.setVelocity(1950);
+            }
+
+            else {
+                return;
+            }
+        }}
+    public void spin3() {
+        runtime.reset();
+        while (opModeIsActive()){
+            if (runtime.seconds() <4){
+                shootingmotorright.setVelocity(2250);
+                shootingmotorleft.setVelocity(2250);
+            }
+
+            else {
+                return;
+            }
+        }}
     public void shoot() {
         runtime.reset();
         while (opModeIsActive()){
-            if (runtime.seconds() <1){
-                shootingmotorright.setVelocity(1800);
-                shootingmotorleft.setVelocity(1800);
+            if (runtime.seconds() <.27){
+                shootingmotorright.setVelocity(1660);
+                shootingmotorleft.setVelocity(1660);
                 shootingservo.setPosition(0);
             }
             else {
                 shootingmotorright.setVelocity(0);
                 shootingmotorleft.setVelocity(0);
                 shootingservo.setPosition(0.4);
+                return;
+            }
+        }}
+    public void shoot2() {
+        runtime.reset();
+        while (opModeIsActive()){
+            if (runtime.seconds() <.28){
+                shootingmotorright.setVelocity(1950);
+                shootingmotorleft.setVelocity(1950);
+                shootingservo.setPosition(0);
+            }
+            else {
+                shootingmotorright.setVelocity(0);
+                shootingmotorleft.setVelocity(0);
+                shootingservo.setPosition(0.4);
+                return;
+            }
+        }}
+    public void shoot3() {
+        runtime.reset();
+        while (opModeIsActive()){
+            if (runtime.seconds() <1){
+                shootingmotorright.setVelocity(2250);
+                shootingmotorleft.setVelocity(2250);
+                shootingservo.setPosition(0);
+            }
+            else {
+                shootingmotorright.setVelocity(0);
+                shootingmotorleft.setVelocity(0);
+                shootingservo.setPosition(0.4);
+                return;
             }
         }}
     public void driveStraight(double maxDriveSpeed,

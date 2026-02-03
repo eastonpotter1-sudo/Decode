@@ -94,11 +94,19 @@ public class Main_teleOp extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
+            double speed;
+
+            if(gamepad1.right_trigger>0.1){
+                speed=1;
+            } else if (gamepad1.left_trigger>0.1) {
+                speed=.25;
+            } else speed=0.6;
 
 
-            double axial = -gamepad1.left_stick_y / 2;  // Note: pushing stick forward gives negative value
-            double lateral = gamepad1.left_stick_x / 2;
-            double yaw = gamepad1.right_stick_x / 2;
+
+            double axial = -gamepad1.left_stick_y *speed;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x *speed;
+            double yaw = gamepad1.right_stick_x *speed;
 
 
             double frontLeftPower = axial + lateral + yaw;
@@ -132,7 +140,6 @@ public class Main_teleOp extends LinearOpMode {
             telemetry.addData("Encoder: FR", frontRightDrive.getCurrentPosition());
             telemetry.addData("Encoder: BL", backLeftDrive.getCurrentPosition());
             telemetry.addData("Encoder: BL", backRightDrive.getCurrentPosition());
-
             telemetry.update();
 
 //            if (gamepad2.a) {
@@ -142,11 +149,11 @@ public class Main_teleOp extends LinearOpMode {
 //            } else shooting_servo.setPower(0);
 
             if (gamepad2.left_stick_y > 0.1) {
-                shootingmotorleft.setVelocity(1700);
-                shootingmotorright.setVelocity(1700);
+                shootingmotorleft.setVelocity(1800);
+                shootingmotorright.setVelocity(1800);
             } else if (gamepad2.left_stick_y< -0.1) {
-                shootingmotorleft.setVelocity(1600);
-                shootingmotorright.setVelocity(1600);
+                shootingmotorleft.setVelocity(1500);
+                shootingmotorright.setVelocity(1500);
             } else {shootingmotorright.setVelocity(0); shootingmotorleft.setVelocity(0);}
 
             if (gamepad2.a){
