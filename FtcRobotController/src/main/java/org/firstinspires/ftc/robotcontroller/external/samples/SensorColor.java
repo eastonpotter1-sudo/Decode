@@ -136,7 +136,8 @@ public class SensorColor extends LinearOpMode {
 
     // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
     // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
-    // the values you get from ColorSensor are dependent on the specific sensor you're using.
+    // the values you get from ColorS
+    // ensor are dependent on the specific sensor you're using.
     colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
 
     // If possible, turn the light on in the beginning (it might already be on anyway,
