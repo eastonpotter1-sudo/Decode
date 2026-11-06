@@ -29,13 +29,15 @@
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+@TeleOp(name="old_teleOP``-", group="Linear OpMode")
 public class Main_teleOp extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -47,7 +49,6 @@ public class Main_teleOp extends LinearOpMode {
     private DcMotorEx shootingmotorleft = null;
     private DcMotorEx shootingmotorright = null;
     private Servo shootingservo = null;
-//    private CRServo shootingservo = null;
 
     @Override
     public void runOpMode() {
@@ -61,6 +62,7 @@ public class Main_teleOp extends LinearOpMode {
         shootingmotorleft= hardwareMap.get(DcMotorEx.class, "shooting_motor_left");
         shootingmotorright= hardwareMap.get(DcMotorEx.class, "shooting_motor_right");
         shootingservo= hardwareMap.get(Servo.class, "shooting_servo");
+
 
         shootingmotorleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shootingmotorright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -149,16 +151,17 @@ public class Main_teleOp extends LinearOpMode {
 //            } else shooting_servo.setPower(0);
 
             if (gamepad2.left_stick_y > 0.1) {
-                shootingmotorleft.setVelocity(1800);
-                shootingmotorright.setVelocity(1800);
+                shootingmotorleft.setVelocity(3400);
+                shootingmotorright.setVelocity(3400);
             } else if (gamepad2.left_stick_y< -0.1) {
-                shootingmotorleft.setVelocity(1500);
-                shootingmotorright.setVelocity(1500);
+                shootingmotorleft.setVelocity(1600);
+                shootingmotorright.setVelocity(1600);
             } else {shootingmotorright.setVelocity(0); shootingmotorleft.setVelocity(0);}
 
             if (gamepad2.a){
                 shootingservo.setPosition(0);
             }else shootingservo.setPosition(.4);
+
 
         }
     }}

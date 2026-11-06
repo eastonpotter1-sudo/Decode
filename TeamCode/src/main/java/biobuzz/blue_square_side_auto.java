@@ -1,35 +1,9 @@
-package org.firstinspires.ftc.teamcode;/* Copyright (c) 2022 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+package biobuzz;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -88,9 +62,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="move_forward_auto", group="Robot")
+@Autonomous(name="blue_square_side_auto", group="Robot")
 
-public class move_forward_auto extends LinearOpMode {
+public class blue_square_side_auto extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor frontLeftDrive = null;
@@ -99,7 +73,8 @@ public class move_forward_auto extends LinearOpMode {
     private DcMotor backRightDrive = null;
     private DcMotorEx shootingmotorleft = null;
     private DcMotorEx shootingmotorright = null;
-    private Servo shootingservo = null;
+    private DcMotorEx intakemotor = null;
+    private CRServo intakeservo = null;
     private IMU             imu         = null;      // Control/Expansion Hub IMU
 
     private double          headingError  = 0;
@@ -129,8 +104,8 @@ public class move_forward_auto extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max turn speed to limit turn rate.
+    static final double     DRIVE_SPEED             = 0.8;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.5;     // Max turn speed to limit turn rate.
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
@@ -151,7 +126,8 @@ public class move_forward_auto extends LinearOpMode {
         backRightDrive= hardwareMap.get(DcMotor.class, "backright_drive");
         shootingmotorleft= hardwareMap.get(DcMotorEx.class, "shooting_motor_left");
         shootingmotorright= hardwareMap.get(DcMotorEx.class, "shooting_motor_right");
-        shootingservo= hardwareMap.get(Servo.class, "shooting_servo");
+        intakeservo= hardwareMap.get(CRServo.class, "intake_servo");
+        intakemotor= hardwareMap.get(DcMotorEx.class, "intake_motor");
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -163,7 +139,7 @@ public class move_forward_auto extends LinearOpMode {
 
         shootingmotorleft.setDirection(DcMotor.Direction.REVERSE);
         shootingmotorright.setDirection(DcMotor.Direction.FORWARD);
-
+        intakemotor.setDirection(DcMotor.Direction.FORWARD);
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
          *
@@ -185,6 +161,7 @@ public class move_forward_auto extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shootingmotorleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shootingmotorright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakemotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -192,6 +169,7 @@ public class move_forward_auto extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shootingmotorleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shootingmotorright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior. BRAKE);
@@ -200,6 +178,7 @@ public class move_forward_auto extends LinearOpMode {
 
         shootingmotorleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shootingmotorright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior. BRAKE);
+        intakemotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior. BRAKE);
 
         runtime.reset();
 
@@ -216,6 +195,7 @@ public class move_forward_auto extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shootingmotorleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shootingmotorright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         imu.resetYaw();
 
         // Step through each leg of the path,
@@ -225,24 +205,20 @@ public class move_forward_auto extends LinearOpMode {
 
         waitForStart();
 
-        driveStraight(DRIVE_SPEED, 20, 0.0);    // Drive Forward 24"
-//        moveRobot(DRIVE_SPEED,62);
-//        encoderDrive(DRIVE_SPEED,62,62);
-        //      moveRobot(DRIVE_SPEED,45);
-        //    turnToHeading( TURN_SPEED, -35.0);
-        //    driveStraight(driveSpeed, 5, -35);// Turn  CW to -45 Degrees
-//        holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
-//
-//        driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
-//        turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
-//        holdHeading( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-//
-//        driveStraight(DRIVE_SPEED, 17.0, 45.0);  // Drive Forward 17" at 45 degrees (-12"x and 12"y)
-//        turnToHeading( TURN_SPEED,   0.0);               // Turn  CW  to 0 Degrees
-//        holdHeading( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for 1 second
-//
-//        driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
+       // shootingservo.setPosition(0.4);
 
+        driveStraight(DRIVE_SPEED, 5, 0.0);
+        sleep(15000);
+        spinleft();
+        shootleft();
+        driveStraight(DRIVE_SPEED, 10, 0.0);
+        turnToHeading( TURN_SPEED, -90);
+        driveStraight(DRIVE_SPEED, 9, -90);
+        turnToHeading( TURN_SPEED, -180);
+        driveStraightIntake(DRIVE_SPEED, 12, -180);
+        driveStraight(DRIVE_SPEED, -20, -180);
+        turnToHeading( TURN_SPEED, -90);
+        driveStraight(DRIVE_SPEED, 38, -90);
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display last telemetry message.
@@ -258,17 +234,17 @@ public class move_forward_auto extends LinearOpMode {
     // **********  HIGH Level driving functions.  ********************
 
     /**
-     *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Driver stops the OpMode running.
-     *
-     //    * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
-     //    * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
-     //    * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
-     //    *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     //    *                   If a relative angle is required, add/subtract from the current robotHeading.
-     //    */
+    *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
+    *  Move will stop if either of these conditions occur:
+    *  1) Move gets to the desired position
+    *  2) Driver stops the OpMode running.
+    *
+//    * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
+//    * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
+//    * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
+//    *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+//    *                   If a relative angle is required, add/subtract from the current robotHeading.
+//    */
 
     public void encoderDrive(double speed,
                              double leftInches, double rightInches) {
@@ -321,51 +297,108 @@ public class move_forward_auto extends LinearOpMode {
 
         }
     }
-    public void spin() {
+    public void spinleft() {
         runtime.reset();
         while (opModeIsActive()){
-            if (runtime.seconds() <3){
-                shootingmotorright.setVelocity(1350);
-                shootingmotorleft.setVelocity(1350);
+            if (runtime.seconds() <.5){
+                shootingmotorleft.setVelocity(2250);
             }
 
             else {
                 return;
             }
         }}
-    public void shoot() {
+
+
+    public void spinright() {
         runtime.reset();
         while (opModeIsActive()){
-            if (runtime.seconds() <.35){
-                shootingmotorright.setVelocity(1350);
-                shootingmotorleft.setVelocity(1350);
-                shootingservo.setPosition(0);
+            if (runtime.seconds() <.5){
+                shootingmotorright.setVelocity(2500);
             }
+
             else {
-                shootingmotorright.setVelocity(0);
-                shootingmotorleft.setVelocity(0);
-                shootingservo.setPosition(0.4);
                 return;
             }
         }}
-    public void shoot2() {
+    public void spinboth() {
         runtime.reset();
         while (opModeIsActive()){
-            if (runtime.seconds() <1){
-                shootingmotorright.setVelocity(1400);
-                shootingmotorleft.setVelocity(1400);
-                shootingservo.setPosition(0);
+            if (runtime.seconds() <.5){
+                shootingmotorleft.setVelocity(2250);
+                shootingmotorright.setVelocity(2500);
+
+            }
+
+            else {
+                return;
+            }
+        }}
+
+    public void shootleft() {
+        runtime.reset();
+        while (opModeIsActive()){
+            if (runtime.seconds() <4){
+                shootingmotorleft.setVelocity(2250);
+                intakemotor.setVelocity(2000);
+                intakeservo.setPower(1000);
+            }
+            else {
+                shootingmotorleft.setVelocity(0);
+                intakemotor.setVelocity(0);
+                intakeservo.setPower(0);
+                return;
+            }
+        }}
+    public void shootright() {
+        runtime.reset();
+        while (opModeIsActive()){
+            if (runtime.seconds() <4){
+                shootingmotorright.setVelocity(2500);
+                intakemotor.setVelocity(2000);
+                intakeservo.setPower(1000);
+            }
+            else {
+                shootingmotorright.setVelocity(0);
+                intakemotor.setVelocity(0);
+                intakeservo.setPower(0);
+                return;
+            }
+        }}
+    public void shootboth() {
+        runtime.reset();
+        while (opModeIsActive()){
+            if (runtime.seconds() <4){
+                shootingmotorleft.setVelocity(2250);
+                shootingmotorright.setVelocity(2500);
+                intakemotor.setVelocity(2000);
+                intakeservo.setPower(1000);
             }
             else {
                 shootingmotorright.setVelocity(0);
                 shootingmotorleft.setVelocity(0);
-                shootingservo.setPosition(0.4);
+                intakemotor.setVelocity(0);
+                intakeservo.setPower((1000));
+                return;
+            }
+        }}
+    public void intake() {
+        runtime.reset();
+        while (opModeIsActive()){
+            if (runtime.seconds() <4){
+                intakemotor.setVelocity(2000);
+                intakeservo.setPower(1000);
+            }
+            else {
+                intakeservo.setPower(0);
+                intakemotor.setVelocity(0);
                 return;
             }
         }}
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {
+
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
@@ -409,6 +442,7 @@ public class move_forward_auto extends LinearOpMode {
                 sendTelemetry(true);
             }
 
+
             // Stop all motion & Turn off RUN_TO_POSITION
             moveRobot(0, 0);
             frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -420,20 +454,176 @@ public class move_forward_auto extends LinearOpMode {
         }
     }
 
-    /**
-     *  Spin on the central axis to point in a new direction.
-     *  <p>
-     *  Move will stop if either of these conditions occur:
-     *  <p>
-     *  1) Move gets to the heading (angle)
-     *  <p>
-     *  2) Driver stops the OpMode running.
-     *
-     * @param maxTurnSpeed Desired MAX speed of turn. (range 0 to +1.0)
-     * @param heading Absolute Heading Angle (in Degrees) relative to last gyro reset.
-     *              0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *              If a relative angle is required, add/subtract from current heading.
-     */
+    public void straferight(double maxDriveSpeed,
+                              double distance,
+                              double heading) {
+
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            leftTarget = frontLeftDrive.getCurrentPosition() + moveCounts;
+            rightTarget = frontRightDrive.getCurrentPosition() - moveCounts;
+            leftTarget = backLeftDrive.getCurrentPosition() - moveCounts;
+            rightTarget = backRightDrive.getCurrentPosition() + moveCounts;
+            // Set Target FIRST, then turn on RUN_TO_POSITION
+            frontLeftDrive.setTargetPosition(leftTarget);
+            frontRightDrive.setTargetPosition(rightTarget);
+            backLeftDrive.setTargetPosition(leftTarget);
+            backRightDrive.setTargetPosition(rightTarget);
+
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            moveRobot(maxDriveSpeed, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (frontLeftDrive.isBusy() && frontRightDrive.isBusy() && backLeftDrive.isBusy() && backRightDrive.isBusy())) {
+
+                // Determine required steering to keep on heading
+                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+
+                // Apply the turning correction to the current driving speed.
+                moveRobot(driveSpeed, turnSpeed);
+
+                // Display drive status for the driver.
+                sendTelemetry(true);
+            }
+
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            moveRobot(0, 0);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shootingmotorleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shootingmotorright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+    public void strafeleft(double maxDriveSpeed,
+                             double distance,
+                             double heading) {
+
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            leftTarget = frontLeftDrive.getCurrentPosition() - moveCounts;
+            rightTarget = frontRightDrive.getCurrentPosition() + moveCounts;
+            leftTarget = backLeftDrive.getCurrentPosition() + moveCounts;
+            rightTarget = backRightDrive.getCurrentPosition() - moveCounts;
+            // Set Target FIRST, then turn on RUN_TO_POSITION
+            frontLeftDrive.setTargetPosition(leftTarget);
+            frontRightDrive.setTargetPosition(rightTarget);
+            backLeftDrive.setTargetPosition(leftTarget);
+            backRightDrive.setTargetPosition(rightTarget);
+
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            moveRobot(maxDriveSpeed, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (frontLeftDrive.isBusy() && frontRightDrive.isBusy() && backLeftDrive.isBusy() && backRightDrive.isBusy())) {
+
+                // Determine required steering to keep on heading
+                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+
+                // Apply the turning correction to the current driving speed.
+                moveRobot(driveSpeed, turnSpeed);
+
+                // Display drive status for the driver.
+                sendTelemetry(true);
+            }
+
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            moveRobot(0, 0);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shootingmotorleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shootingmotorright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+    public void driveStraightIntake(double maxDriveSpeed,
+                              double distance,
+                              double heading) {
+
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            leftTarget = frontLeftDrive.getCurrentPosition() + moveCounts;
+            rightTarget = frontRightDrive.getCurrentPosition() + moveCounts;
+            leftTarget = backLeftDrive.getCurrentPosition() + moveCounts;
+            rightTarget = backRightDrive.getCurrentPosition() + moveCounts;
+            // Set Target FIRST, then turn on RUN_TO_POSITION
+            frontLeftDrive.setTargetPosition(leftTarget);
+            frontRightDrive.setTargetPosition(rightTarget);
+            backLeftDrive.setTargetPosition(leftTarget);
+            backRightDrive.setTargetPosition(rightTarget);
+
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            intakemotor.setVelocity(2000);
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            moveRobot(maxDriveSpeed, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (frontLeftDrive.isBusy() && frontRightDrive.isBusy() && backLeftDrive.isBusy() && backRightDrive.isBusy() && intakemotor.isBusy())) {
+
+                // Determine required steering to keep on heading
+                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    turnSpeed *= -1.0;
+
+                // Apply the turning correction to the current driving speed.
+                moveRobot(driveSpeed, turnSpeed);
+
+                // Display drive status for the driver.
+                sendTelemetry(true);
+            }
+
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            moveRobot(0, 0);
+            intakemotor.setVelocity(0);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shootingmotorleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shootingmotorright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
     public void turnToHeading(double maxTurnSpeed, double heading) {
 
         // Run getSteeringCorrection() once to pre-calculate the current error

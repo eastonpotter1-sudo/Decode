@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;/* Copyright (c) 2022 FIRST. All rights reserved.
+package decode.teamcode;/* Copyright (c) 2022 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -88,9 +89,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="blue_back_auto", group="Robot")
+@Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
 
-public class blue_back_auto extends LinearOpMode {
+public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor frontLeftDrive = null;
@@ -145,8 +146,8 @@ private ElapsedTime runtime = new ElapsedTime();
     public void runOpMode() {
 
         // Initialize the drive system variables.
-        frontLeftDrive  = hardwareMap.get(DcMotor.class, "frontleft_drive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "frontright_drive");
+        frontLeftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backleft_drive");
         backRightDrive= hardwareMap.get(DcMotor.class, "backright_drive");
         shootingmotorleft= hardwareMap.get(DcMotorEx.class, "shooting_motor_left");
@@ -186,13 +187,6 @@ private ElapsedTime runtime = new ElapsedTime();
         shootingmotorleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shootingmotorright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shootingmotorleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shootingmotorright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior. BRAKE);
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -200,8 +194,6 @@ private ElapsedTime runtime = new ElapsedTime();
 
         shootingmotorleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shootingmotorright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior. BRAKE);
-
-        runtime.reset();
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -223,25 +215,10 @@ private ElapsedTime runtime = new ElapsedTime();
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        waitForStart();
-
         shootingservo.setPosition(0.4);
-        driveStraight(DRIVE_SPEED, -42, 0.0);    // Drive Forward 24"
-//        moveRobot(DRIVE_SPEED,62);
-//        encoderDrive(DRIVE_SPEED,62,62);
-        turnToHeading( TURN_SPEED, 7.0);
-        spin();
+        driveStraight(DRIVE_SPEED, -24, 0.0);    // Drive Forward 24"
+        sleep(500);
         shoot();
-        spin();
-        shoot2();
-        spin();
-        shoot3();
-        turnToHeading(TURN_SPEED, -40);
-        driveStraight(DRIVE_SPEED, 20, -40);
-        shootingservo.setPosition(0.4);
-        sleep(400);
-  //      moveRobot(DRIVE_SPEED,45);
-    //    driveStraight(driveSpeed, 5, -35);
 //        turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
 //        holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
 //
@@ -282,126 +259,19 @@ private ElapsedTime runtime = new ElapsedTime();
 //    *                   If a relative angle is required, add/subtract from the current robotHeading.
 //    */
 
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches) {
-        int newFrontLeftTarget;
-        int newFrontRightTarget;
-        int newBackLeftTarget;
-        int newBackRightTarget;
-
-        // Ensure that the OpMode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newFrontLeftTarget = frontLeftDrive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
-            newFrontRightTarget = frontRightDrive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
-            newBackLeftTarget = backLeftDrive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
-            newBackRightTarget = frontRightDrive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
-            frontLeftDrive.setTargetPosition(newFrontLeftTarget);
-            frontRightDrive.setTargetPosition(newFrontRightTarget);
-            backLeftDrive.setTargetPosition(newBackLeftTarget);
-            backRightDrive.setTargetPosition(newBackRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            frontLeftDrive.setPower(Math.abs(speed));
-            frontRightDrive.setPower(Math.abs(speed));
-            backLeftDrive.setPower(Math.abs(speed));
-            backRightDrive.setPower(Math.abs(speed));
-
-
-            // Stop all motion;
-            frontLeftDrive.setPower(0);
-            frontRightDrive.setPower(0);
-            backLeftDrive.setPower(0);
-            backRightDrive.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            sleep(250);   // optional pause after each move.
-
-
-        }
-    }
-    public void spin() {
-        runtime.reset();
-        while (opModeIsActive()){
-            if (runtime.seconds() <3){
-                shootingmotorright.setVelocity(1450);
-                shootingmotorleft.setVelocity(1450);
-            }
-
-            else {
-                return;
-            }
-        }}
-    public void spin3() {
-        runtime.reset();
-        while (opModeIsActive()){
-            if (runtime.seconds() <3){
-                shootingmotorright.setVelocity(1500);
-                shootingmotorleft.setVelocity(1500);
-            }
-
-            else {
-                return;
-            }
-        }}
     public void shoot() {
-        runtime.reset();
         while (opModeIsActive()){
-        if (runtime.seconds() <.3){
-            shootingmotorright.setVelocity(1460);
-            shootingmotorleft.setVelocity(1460);
+        if (runtime.seconds() <0.5){
+            shootingmotorright.setVelocity(5000);
+            shootingmotorleft.setVelocity(5000);
             shootingservo.setPosition(0);
         }
         else {
             shootingmotorright.setVelocity(0);
             shootingmotorleft.setVelocity(0);
             shootingservo.setPosition(0.4);
-            return;
         }
     }}
-    public void shoot2() {
-        runtime.reset();
-        while (opModeIsActive()){
-            if (runtime.seconds() <.3){
-                shootingmotorright.setVelocity(1460);
-                shootingmotorleft.setVelocity(1460);
-                shootingservo.setPosition(0);
-            }
-            else {
-                shootingmotorright.setVelocity(0);
-                shootingmotorleft.setVelocity(0);
-                shootingservo.setPosition(0.4);
-                return;
-            }
-        }}
-    public void shoot3() {
-        runtime.reset();
-        while (opModeIsActive()){
-            if (runtime.seconds() <1){
-                shootingmotorright.setVelocity(1500);
-                shootingmotorleft.setVelocity(1500);
-                shootingservo.setPosition(0);
-            }
-            else {
-                shootingmotorright.setVelocity(0);
-                shootingmotorleft.setVelocity(0);
-                shootingservo.setPosition(0.4);
-                return;
-            }
-        }}
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {

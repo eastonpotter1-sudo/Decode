@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;/* Copyright (c) 2022 FIRST. All rights reserved.
+package decode.teamcode;/* Copyright (c) 2022 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -88,9 +88,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="red_back_auto", group="Robot")
+@Autonomous(name="move_forward_auto", group="Robot")
 
-public class red_back_auto extends LinearOpMode {
+public class move_forward_auto extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor frontLeftDrive = null;
@@ -225,24 +225,12 @@ public class red_back_auto extends LinearOpMode {
 
         waitForStart();
 
-        shootingservo.setPosition(0.4);
-        driveStraight(DRIVE_SPEED, -42, 0.0);    // Drive Forward 24"
+        driveStraight(DRIVE_SPEED, 20, 0.0);    // Drive Forward 24"
 //        moveRobot(DRIVE_SPEED,62);
 //        encoderDrive(DRIVE_SPEED,62,62);
-        turnToHeading( TURN_SPEED, -7.0);
-        spin();
-        shoot();
-        spin();
-        shoot2();
-        spin();
-        shoot3();
-        turnToHeading(TURN_SPEED, 40);
-        driveStraight(DRIVE_SPEED, 20, 40);
-        shootingservo.setPosition(0.4);
-        sleep(400);
         //      moveRobot(DRIVE_SPEED,45);
-        //    driveStraight(driveSpeed, 5, -35);
-//        turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
+        //    turnToHeading( TURN_SPEED, -35.0);
+        //    driveStraight(driveSpeed, 5, -35);// Turn  CW to -45 Degrees
 //        holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
 //
 //        driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
@@ -337,20 +325,8 @@ public class red_back_auto extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive()){
             if (runtime.seconds() <3){
-                shootingmotorright.setVelocity(1450);
-                shootingmotorleft.setVelocity(1450);
-            }
-
-            else {
-                return;
-            }
-        }}
-    public void spin3() {
-        runtime.reset();
-        while (opModeIsActive()){
-            if (runtime.seconds() <3){
-                shootingmotorright.setVelocity(1500);
-                shootingmotorleft.setVelocity(1500);
+                shootingmotorright.setVelocity(1350);
+                shootingmotorleft.setVelocity(1350);
             }
 
             else {
@@ -360,9 +336,9 @@ public class red_back_auto extends LinearOpMode {
     public void shoot() {
         runtime.reset();
         while (opModeIsActive()){
-            if (runtime.seconds() <.3){
-                shootingmotorright.setVelocity(1460);
-                shootingmotorleft.setVelocity(1460);
+            if (runtime.seconds() <.35){
+                shootingmotorright.setVelocity(1350);
+                shootingmotorleft.setVelocity(1350);
                 shootingservo.setPosition(0);
             }
             else {
@@ -375,24 +351,9 @@ public class red_back_auto extends LinearOpMode {
     public void shoot2() {
         runtime.reset();
         while (opModeIsActive()){
-            if (runtime.seconds() <.3){
-                shootingmotorright.setVelocity(1460);
-                shootingmotorleft.setVelocity(1460);
-                shootingservo.setPosition(0);
-            }
-            else {
-                shootingmotorright.setVelocity(0);
-                shootingmotorleft.setVelocity(0);
-                shootingservo.setPosition(0.4);
-                return;
-            }
-        }}
-    public void shoot3() {
-        runtime.reset();
-        while (opModeIsActive()){
             if (runtime.seconds() <1){
-                shootingmotorright.setVelocity(1500);
-                shootingmotorleft.setVelocity(1500);
+                shootingmotorright.setVelocity(1400);
+                shootingmotorleft.setVelocity(1400);
                 shootingservo.setPosition(0);
             }
             else {
