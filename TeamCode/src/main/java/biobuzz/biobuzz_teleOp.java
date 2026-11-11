@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -48,7 +49,7 @@ public class biobuzz_teleOp extends LinearOpMode {
     private DcMotorEx shootingmotorleft = null;
     private DcMotorEx shootingmotorright = null;
     private DcMotorEx intakemotor = null;
-   private CRServo intakeservo = null;
+  // private CRServo intakeservo = null;
 
     @Override
     public void runOpMode() {
@@ -62,7 +63,7 @@ public class biobuzz_teleOp extends LinearOpMode {
         shootingmotorleft= hardwareMap.get(DcMotorEx.class, "shooting_motor_left");
         shootingmotorright= hardwareMap.get(DcMotorEx.class, "shooting_motor_right");
         intakemotor= hardwareMap.get(DcMotorEx.class, "intake_motor");
-        intakeservo= hardwareMap.get(CRServo.class, "intake_servo");
+    //    intakeservo= hardwareMap.get(CRServo.class, "intake_servo");
 
 
         shootingmotorleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -73,13 +74,13 @@ public class biobuzz_teleOp extends LinearOpMode {
         shootingmotorright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        shootingmotorleft.setDirection(DcMotor.Direction.REVERSE);
-        shootingmotorright.setDirection(DcMotor.Direction.FORWARD);
+        shootingmotorleft.setDirection(DcMotor.Direction.FORWARD);
+        shootingmotorright.setDirection(DcMotor.Direction.REVERSE);
         intakemotor.setDirection(DcMotor.Direction.FORWARD);
 
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -148,20 +149,31 @@ public class biobuzz_teleOp extends LinearOpMode {
             telemetry.addData("Encoder: BL", backLeftDrive.getCurrentPosition());
             telemetry.addData("Encoder: BL", backRightDrive.getCurrentPosition());
             telemetry.update();
-
+             double speedleft = gamepad2.touchpad_finger_1_y * 50 + 1000;
+             double speedright = gamepad2.touchpad_finger_1_y * 50 + 1000;
 
             if (gamepad2.left_trigger > .05) {
-                shootingmotorleft.setVelocity(2250);
+                shootingmotorleft.setVelocity(speedleft);
             } else {shootingmotorleft.setVelocity(0);}
 
             if (gamepad2.right_trigger > .05) {
-                shootingmotorright.setVelocity(2500);
+                shootingmotorright.setVelocity(speedright);
             } else {shootingmotorright.setVelocity(0);}
 
+            if (gamepad2.dpad_up) {
+
+            }
+
             if (gamepad2.b){
-                intakemotor.setVelocity(2000);
-                intakeservo.setPower(1000);
-            } else {intakemotor.setVelocity(0);}
+                intakemotor.setDirection(DcMotorSimple.Direction.FORWARD);
+                intakemotor.setVelocity(-1000);
+
+            } else {intakemotor.setPower(0);}
+
+            if (gamepad2.x){
+                intakemotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                intakemotor.setVelocity(-1000);
+            } else {intakemotor.setPower(0);}
 
         }
     }}

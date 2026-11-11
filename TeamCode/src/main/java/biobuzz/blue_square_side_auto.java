@@ -74,7 +74,7 @@ public class blue_square_side_auto extends LinearOpMode {
     private DcMotorEx shootingmotorleft = null;
     private DcMotorEx shootingmotorright = null;
     private DcMotorEx intakemotor = null;
-    private CRServo intakeservo = null;
+   // private CRServo intakeservo = null;
     private IMU             imu         = null;      // Control/Expansion Hub IMU
 
     private double          headingError  = 0;
@@ -126,7 +126,7 @@ public class blue_square_side_auto extends LinearOpMode {
         backRightDrive= hardwareMap.get(DcMotor.class, "backright_drive");
         shootingmotorleft= hardwareMap.get(DcMotorEx.class, "shooting_motor_left");
         shootingmotorright= hardwareMap.get(DcMotorEx.class, "shooting_motor_right");
-        intakeservo= hardwareMap.get(CRServo.class, "intake_servo");
+        //intakeservo= hardwareMap.get(CRServo.class, "intake_servo");
         intakemotor= hardwareMap.get(DcMotorEx.class, "intake_motor");
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -145,8 +145,8 @@ public class blue_square_side_auto extends LinearOpMode {
          *
          * To Do:  EDIT these two lines to match YOUR mounting configuration.
          */
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the IMU with this mounting orientation
@@ -341,12 +341,12 @@ public class blue_square_side_auto extends LinearOpMode {
             if (runtime.seconds() <4){
                 shootingmotorleft.setVelocity(2250);
                 intakemotor.setVelocity(2000);
-                intakeservo.setPower(1000);
+              //  intakeservo.setPower(1000);
             }
             else {
                 shootingmotorleft.setVelocity(0);
                 intakemotor.setVelocity(0);
-                intakeservo.setPower(0);
+             //   intakeservo.setPower(0);
                 return;
             }
         }}
@@ -356,12 +356,12 @@ public class blue_square_side_auto extends LinearOpMode {
             if (runtime.seconds() <4){
                 shootingmotorright.setVelocity(2500);
                 intakemotor.setVelocity(2000);
-                intakeservo.setPower(1000);
+                //intakeservo.setPower(1000);
             }
             else {
                 shootingmotorright.setVelocity(0);
                 intakemotor.setVelocity(0);
-                intakeservo.setPower(0);
+                //intakeservo.setPower(0);
                 return;
             }
         }}
@@ -372,13 +372,13 @@ public class blue_square_side_auto extends LinearOpMode {
                 shootingmotorleft.setVelocity(2250);
                 shootingmotorright.setVelocity(2500);
                 intakemotor.setVelocity(2000);
-                intakeservo.setPower(1000);
+                //intakeservo.setPower(1000);
             }
             else {
                 shootingmotorright.setVelocity(0);
                 shootingmotorleft.setVelocity(0);
                 intakemotor.setVelocity(0);
-                intakeservo.setPower((1000));
+              //  intakeservo.setPower((1000));
                 return;
             }
         }}
@@ -387,10 +387,10 @@ public class blue_square_side_auto extends LinearOpMode {
         while (opModeIsActive()){
             if (runtime.seconds() <4){
                 intakemotor.setVelocity(2000);
-                intakeservo.setPower(1000);
+                //intakeservo.setPower(1000);
             }
             else {
-                intakeservo.setPower(0);
+               // intakeservo.setPower(0);
                 intakemotor.setVelocity(0);
                 return;
             }
